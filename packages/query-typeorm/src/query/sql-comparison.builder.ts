@@ -1,8 +1,6 @@
 import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
 import { ObjectLiteral } from 'typeorm';
 
-import { randomString } from '../common';
-
 /**
  * @internal
  */
@@ -24,6 +22,8 @@ export type EntityComparisonField<Entity, F extends keyof Entity> =
  * Builder to create SQL Comparisons. (=, !=, \>, etc...)
  */
 export class SQLComparisonBuilder<Entity> {
+  paramCount = 0;
+
   static DEFAULT_COMPARISON_MAP: Record<string, string> = {
     eq: '=',
     neq: '!=',
@@ -40,8 +40,8 @@ export class SQLComparisonBuilder<Entity> {
   constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
 
   private get paramName(): string {
-    const id = randomString();
-    const param = `param${id}`;
+    const param = `param${this.paramCount}`;
+    this.paramCount += 1;
     return param;
   }
 
